@@ -13,11 +13,11 @@ class DbConnector {
 
     private static final String URL_TEMPLATE = "jdbc:postgresql://%s:%d/%s";
     private static final String URL;
-    private static final String HOST = "localhost";
+    private static final String HOST = "54.224.37.210";
     private static final int PORT = 5432;
-    private static final String DB_NAME = "mytestdb";
-    private static final String USER = "postgres";
-    private static final String PASSWORD = "password";
+    private static final String DB_NAME = "atom27_tinderdb";
+    private static final String USER = "atom27";
+    private static final String PASSWORD = "atom27";
 
     static {
         try {

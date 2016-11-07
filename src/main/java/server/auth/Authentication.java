@@ -7,6 +7,7 @@ import server.info.Token;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import java.sql.SQLClientInfoException;
 
 @Path("/auth")
 public class Authentication {
@@ -33,6 +34,10 @@ public class Authentication {
             AuthDataStorage.registerNewUser(user, password);
             log.info("New user '{}' registered", user);
             return Response.ok("User " + user + " registered.").build();
+        }
+        catch(SQLClientInfoException e){
+            log.info("User with name '{}' already exists.", user);
+            return Response.status(Response.Status.CONFLICT).build();
         }
         catch(Exception e){
             log.info(e.getMessage());

@@ -17,7 +17,7 @@ public class TokenPrKey implements Serializable {
     public boolean equals(Object obj){
         if (obj instanceof TokenPrKey) {
             TokenPrKey _key = (TokenPrKey)obj;
-            return id == _key.id && date.equals(_key.date);
+            return id == _key.id;
         }
         return false;
     }

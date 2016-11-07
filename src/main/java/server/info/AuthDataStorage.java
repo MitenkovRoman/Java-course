@@ -10,6 +10,7 @@ import server.dao.TokenDao;
 import server.dao.UserDao;
 
 import javax.validation.constraints.NotNull;
+import java.sql.SQLClientInfoException;
 import java.util.List;
 import java.util.Random;
 
@@ -25,13 +26,20 @@ public class AuthDataStorage{
         credentials = new UserDao();
         scores = new ScoreDao();
         tokens = new TokenDao();
-        registerNewUser("admin", "admin");
+        try {
+            registerNewUser("admin", "admin");
+        }
+        catch(Exception e){
+            log.info("Can't add user");
+        }
     }
 
-    public static void registerNewUser(@NotNull String user, @NotNull String password){
+    public static void registerNewUser(@NotNull String user, @NotNull String password) throws Exception{
         Random rand = new Random();
+        if (!credentials.getAllWhere("name = '"+user+"'").isEmpty())
+            throw new SQLClientInfoException();
         credentials.insert(new User(user, password));
-        scores.insert(new Score(user, rand.nextInt(500)));
+        scores.insert(new Leaderboard(user, rand.nextInt(500)));
     }
 
     public static String writeUsersJson() throws Exception {
@@ -45,7 +53,7 @@ public class AuthDataStorage{
     }
 
     public static String writeLeadersJson(int N) throws Exception {
-        List<Score> scoresList = scores.getAllWithCondition("order by score desc LIMIT "+ N);
+        List<Leaderboard> scoresList = scores.getAllWithCondition("order by score desc LIMIT "+ N);
         return mapper.writeValueAsString(scoresList);
     }
 
@@ -83,7 +91,7 @@ public class AuthDataStorage{
         List<Token> tokenList = tokens.getAllWhere("id = '" + token.getId() + "'");
         String userName = tokenList.get(0).getUserName();
         List<User> userList = credentials.getAllWhere("name = '"+userName+"'");
-        List<Score> scoreList = scores.getAllWhere("userName = '"+userName+"'");
+        List<Leaderboard> scoreList = scores.getAllWhere("userName = '"+userName+"'");
 
         credentials.delete(userName);
         userList.get(0).setName(new_name);
@@ -120,5 +128,9 @@ public class AuthDataStorage{
         userList.get(0).setPassword(new_password);
         credentials.insert(userList.get(0));
         return userName;
+    }
+
+    public static boolean tokenExists(Long id) {
+        return tokens.tokenExists(id);
     }
 }

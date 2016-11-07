@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 @Table(name = "users")
 @IdClass(UserPrKey.class)
 public class User implements Serializable{
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     private int id;
     @Id

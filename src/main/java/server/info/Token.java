@@ -31,7 +31,10 @@ public class Token {
     }
 
     public Token(@NotNull String _userName){
-        this.id = ThreadLocalRandom.current().nextLong();;
+
+        do {
+            this.id = ThreadLocalRandom.current().nextLong();
+        } while (AuthDataStorage.tokenExists(id));
         date = new Date(System.currentTimeMillis());
         userName = _userName;
     }

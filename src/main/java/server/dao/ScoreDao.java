@@ -3,7 +3,7 @@ package server.dao;
 import jersey.repackaged.com.google.common.base.Joiner;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import server.info.Score;
+import server.info.Leaderboard;
 
 import javax.validation.constraints.NotNull;
 import java.sql.Connection;
@@ -15,13 +15,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class ScoreDao implements Dao<Score> {
+public class ScoreDao implements Dao<Leaderboard> {
     private static final Logger log = LogManager.getLogger(ScoreDao.class);
 
     public ScoreDao(){
         try (Connection con = DbConnector.getConnection();
                 Statement stm = con.createStatement()) {
-             stm.executeQuery("CREATE TABLE IF NOT EXISTS scores ( "+
+             stm.executeQuery("CREATE TABLE IF NOT EXISTS Leaderboard ( "+
                             "userName  VARCHAR(255)  NOT NULL   PRIMARY KEY, "+
                             "score     INTEGER       NOT NULL);");
         }
@@ -31,11 +31,11 @@ public class ScoreDao implements Dao<Score> {
     }
 
     @Override
-    public List<Score> getAll() {
-        List<Score> persons = new ArrayList<>();
+    public List<Leaderboard> getAll() {
+        List<Leaderboard> persons = new ArrayList<>();
         try (Connection con = DbConnector.getConnection();
              Statement stm = con.createStatement()) {
-            ResultSet rs = stm.executeQuery("SELECT * FROM scores;");
+            ResultSet rs = stm.executeQuery("SELECT * FROM Leaderboard;");
             while (rs.next()) {
                 persons.add(mapToScore(rs));
             }
@@ -48,12 +48,12 @@ public class ScoreDao implements Dao<Score> {
     }
 
     @Override
-    public List<Score> getAllWhere(String ... conditions) {
-        List<Score> persons = new ArrayList<>();
+    public List<Leaderboard> getAllWhere(String ... conditions) {
+        List<Leaderboard> persons = new ArrayList<>();
         String totalCondition = Joiner.on(" AND ").join(Arrays.asList(conditions));
         try (Connection con = DbConnector.getConnection();
              Statement stm = con.createStatement()) {
-            ResultSet rs = stm.executeQuery("SELECT * FROM scores WHERE "+totalCondition+";");
+            ResultSet rs = stm.executeQuery("SELECT * FROM Leaderboard WHERE "+totalCondition+";");
             while (rs.next()) {
                 persons.add(mapToScore(rs));
             }
@@ -64,12 +64,12 @@ public class ScoreDao implements Dao<Score> {
         return persons;
     }
 
-    public List<Score> getAllWithCondition(String ... conditions) {
-        List<Score> persons = new ArrayList<>();
+    public List<Leaderboard> getAllWithCondition(String ... conditions) {
+        List<Leaderboard> persons = new ArrayList<>();
         String totalCondition = Joiner.on(" AND ").join(Arrays.asList(conditions));
         try (Connection con = DbConnector.getConnection();
                 Statement stm = con.createStatement()) {
-            ResultSet rs = stm.executeQuery("SELECT * FROM scores "+totalCondition+";");
+            ResultSet rs = stm.executeQuery("SELECT * FROM Leaderboard "+totalCondition+";");
             while (rs.next()) {
                 persons.add(mapToScore(rs));
             }
@@ -81,10 +81,10 @@ public class ScoreDao implements Dao<Score> {
     }
 
     @Override
-    public void insert(Score score) {
+    public void insert(Leaderboard score) {
         try (Connection con = DbConnector.getConnection();
              Statement stm = con.createStatement()) {
-            stm.execute(String.format("INSERT INTO scores (score, userName) VALUES (%d, '%s');",
+            stm.execute(String.format("INSERT INTO Leaderboard (score, userName) VALUES (%d, '%s');",
                     score.getScore(), score.getUserName()));
         } catch (SQLException e) {
             log.error("Failed to add score {}", score);
@@ -94,13 +94,13 @@ public class ScoreDao implements Dao<Score> {
     public void delete(@NotNull String userName) {
         try (Connection con = DbConnector.getConnection();
              Statement stm = con.createStatement()) {
-            stm.execute("DELETE FROM scores where userName = '"+userName+"';");
+            stm.execute("DELETE FROM Leaderboard where userName = '"+userName+"';");
         } catch (SQLException e) {
-            log.error("Failed to delete scores of {}", userName);
+            log.error("Failed to delete Leaderboard of {}", userName);
         }
     }
 
-    private static Score mapToScore(ResultSet rs) throws SQLException {
-        return new Score(rs.getString("userName"), rs.getInt("score"));
+    private static Leaderboard mapToScore(ResultSet rs) throws SQLException {
+        return new Leaderboard(rs.getString("userName"), rs.getInt("score"));
     }
 }

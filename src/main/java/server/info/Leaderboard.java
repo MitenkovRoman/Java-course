@@ -2,12 +2,12 @@ package server.info;
 
 import javax.validation.constraints.NotNull;
 
-public class Score {
+public class Leaderboard {
     private int score;
     @NotNull
     private String userName;
 
-    public Score(String _userName, int _score){
+    public Leaderboard(String _userName, int _score){
         score = _score;
         userName = _userName;
     }

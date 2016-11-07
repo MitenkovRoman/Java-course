@@ -1,13 +1,10 @@
 package server.info;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 public class UserPrKey implements Serializable {
 
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
     @NotNull
